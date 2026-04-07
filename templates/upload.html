@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Upload Images - Admin</title>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- AOS -->
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+<style>
+body {
+    background: #0f172a;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* NAVBAR */
+.navbar {
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+}
+
+/* UPLOAD BOX */
+.upload-box {
+    background: #1e293b;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    margin: 40px auto;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+/* IMAGE CARD */
+.img-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.img-card img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+/* DELETE BUTTON */
+.delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">ShutterStory</a>
+
+        <div class="ms-auto">
+            <a href="/admin" class="btn btn-success btn-sm me-2">Dashboard</a>
+            <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<!-- UPLOAD FORM -->
+<div class="upload-box text-center" data-aos="fade-up">
+    <h3 class="mb-3">Upload Gallery Image 📸</h3>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" class="form-control mb-3" required>
+        <button class="btn btn-warning w-100">Upload Image</button>
+    </form>
+</div>
+
+<!-- GALLERY -->
+<div class="container mt-5">
+    <h3 class="text-center mb-4">Uploaded Images</h3>
+
+    <div class="row">
+
+        {% for img in images %}
+        <div class="col-md-3 mb-4">
+            <div class="img-card">
+                <img src="/static/uploads/{{ img[1] }}" class="img-fluid">
+
+                <!-- DELETE BUTTON -->
+                <a href="/delete-image/{{ img[0] }}"
+                   class="btn btn-danger btn-sm delete-btn"
+                   onclick="return confirm('Delete this image?')">
+                    Delete
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+AOS.init();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Pose Generator</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body {
+    background: #0f172a;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container mt-5 text-center">
+
+    <h2>🤖 AI Pose Generator</h2>
+
+    <form method="POST" class="mt-4">
+
+        <select name="category" class="form-control mb-3">
+            <option>Wedding</option>
+            <option>Birthday</option>
+            <option>Cinematic</option>
+        </select>
+
+        <input type="text" name="mood" placeholder="Enter mood (romantic, fun...)" 
+               class="form-control mb-3" required>
+
+        <button class="btn btn-warning">Generate AI Image</button>
+    </form>
+
+    {% if image %}
+        <div class="mt-4">
+            <h4>Generated Image:</h4>
+            <img src="{{ image }}" class="img-fluid mt-3" style="max-width:500px;">
+        </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

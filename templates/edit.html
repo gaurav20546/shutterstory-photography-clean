@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Booking</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        /* FORM BOX */
+        .form-box {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            margin: 60px auto;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .form-box h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            border-radius: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/admin">Admin Panel</a>
+
+        <div class="ms-auto">
+            <a href="/admin" class="btn btn-secondary btn-sm me-2">Dashboard</a>
+            <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<!-- FORM -->
+<div class="form-box" data-aos="fade-up">
+    <h2>Edit Booking ✏️</h2>
+
+    <form method="POST">
+
+        <input type="text" name="name" class="form-control"
+               value="{{ booking[1] }}" placeholder="Name" required>
+
+        <input type="email" name="email" class="form-control"
+               value="{{ booking[2] }}" placeholder="Email" required>
+
+        <input type="text" name="phone" class="form-control"
+               value="{{ booking[3] }}" placeholder="Phone" required>
+
+        <select name="service" class="form-control">
+            <option {% if booking[4] == 'Wedding Photography' %}selected{% endif %}>
+                Wedding Photography
+            </option>
+            <option {% if booking[4] == 'Birthday Shoot' %}selected{% endif %}>
+                Birthday Shoot
+            </option>
+            <option {% if booking[4] == 'Cinematic Shoot' %}selected{% endif %}>
+                Cinematic Shoot
+            </option>
+        </select>
+
+        <input type="date" name="event_date" class="form-control"
+               value="{{ booking[5] }}" required>
+
+        <button class="btn btn-warning w-100 mt-3">Update Booking</button>
+    </form>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+AOS.init();
+</script>
+
+</body>
+</html>

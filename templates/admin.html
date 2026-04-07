@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - GP Photography</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #0f172a;
+            color: white;
+        }
+
+        .navbar {
+            backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.6) !important;
+        }
+
+        .dashboard-card {
+            background: #1e293b;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .table {
+            background: #1e293b;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .btn {
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+    <div class="container">
+        <a class="navbar-brand" href="/">ShutterStory</a>
+
+        <div class="ms-auto">
+            <a href="/" class="btn btn-light btn-sm me-2">Home</a>
+
+        </div>
+    </div>
+</nav>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">ShutterStory Admin</a>
+
+        <div class="ms-auto">
+            <a href="/upload" class="btn btn-success btn-sm me-2">Upload Photos</a>
+            <a href="/change-password" class="btn btn-info btn-sm me-2">Change Password</a>
+            <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+
+    <!-- Dashboard Stats -->
+    <div class="row mb-4" data-aos="fade-up">
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <h4>Total Bookings</h4>
+                <h2>{{ bookings|length }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <h4>Services Offered</h4>
+                <h2>3+</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <h4>Status</h4>
+                <h2 style="color:lime;">Active</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Title -->
+    <h1 class="text-center mb-4" data-aos="fade-up">All Bookings 📋</h1>
+
+    {% if bookings %}
+    <div class="table-responsive" data-aos="fade-up">
+        <table class="table table-dark table-hover shadow">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Service</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking[0] }}</td>
+                    <td>{{ booking[1] }}</td>
+                    <td>{{ booking[2] }}</td>
+                    <td>{{ booking[3] }}</td>
+                    <td>
+                        <span class="badge bg-warning text-dark">
+                            {{ booking[4] }}
+                        </span>
+                    </td>
+                    <td>{{ booking[5] }}</td>
+
+                    <td>
+                        <a href="/edit/{{ booking[0] }}" class="btn btn-primary btn-sm">Edit</a>
+
+                        <a href="/delete/{{ booking[0] }}" 
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Delete this booking?');">
+                           Delete
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="alert alert-warning text-center">
+            No bookings available yet.
+        </div>
+    {% endif %}
+
+</div>
+
+<!-- AOS Animation -->
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+AOS.init();
+</script>
+
+</body>
+</html>
