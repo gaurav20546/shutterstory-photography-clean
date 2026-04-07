@@ -19,7 +19,7 @@ UPLOAD_FOLDER = "static/uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-DB_PATH = "photography.db"
+DB_PATH = "/tmp/photography.db"
 
 # ================= DATABASE =================
 def get_db():
@@ -303,5 +303,6 @@ def poses(category):
 
 # ================= RUN =================
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
     
