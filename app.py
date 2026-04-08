@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import smtplib
 from email.mime.text import MIMEText
 import random
+import time
 
 # ================= LOAD ENV =================
 load_dotenv()
@@ -65,7 +66,6 @@ def init_db():
         )
     """)
 
-    # Default admin
     cursor.execute("SELECT * FROM admin WHERE username=?", ("admin",))
     if not cursor.fetchone():
         hashed = generate_password_hash("1234")
@@ -77,7 +77,7 @@ def init_db():
 init_db()
 
 # ================= AI CONFIG =================
-API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2"
+API_URL = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5"
 
 HEADERS = {
     "Authorization": f"Bearer {os.getenv('HF_TOKEN')}"
@@ -85,14 +85,18 @@ HEADERS = {
 
 def generate_image(prompt):
     try:
-        response = requests.post(API_URL, headers=HEADERS, json={"inputs": prompt})
-        if response.status_code == 200:
-            return response.content
-        else:
-            print("AI ERROR:", response.text)
-            return None
+        for _ in range(5):
+            response = requests.post(API_URL, headers=HEADERS, json={"inputs": prompt}, timeout=60)
+
+            if response.status_code == 200:
+                return response.content
+
+            print("Waiting for model...")
+            time.sleep(5)
+
+        return None
     except Exception as e:
-        print("AI EXCEPTION:", e)
+        print("AI ERROR:", e)
         return None
 
 # ================= ROUTES =================
@@ -114,12 +118,12 @@ def ai_generate():
         category = request.form["category"]
         mood = request.form["mood"]
 
-        prompt = f"{category} photography pose, {mood}, professional, high quality"
+        prompt = f"{category} photography pose, {mood}, high quality, professional"
 
         img_data = generate_image(prompt)
 
         if img_data:
-            filename = f"ai_{category}_{random.randint(1,9999)}.png"
+            filename = f"ai_{random.randint(1,9999)}.png"
             path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
 
             with open(path, "wb") as f:
@@ -210,33 +214,6 @@ def delete(id):
     conn.close()
     return redirect("/admin")
 
-# ================= UPLOAD =================
-@app.route("/upload", methods=["GET", "POST"])
-def upload():
-    if "admin" not in session:
-        return redirect("/login")
-
-    if request.method == "POST":
-        file = request.files.get("image")
-
-        if file and file.filename != "":
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-
-            conn = get_db()
-            cursor = conn.cursor()
-            cursor.execute("INSERT INTO gallery (image) VALUES (?)", (filename,))
-            conn.commit()
-            conn.close()
-
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM gallery")
-    images = cursor.fetchall()
-    conn.close()
-
-    return render_template("upload.html", images=images)
-
 # ================= GALLERY =================
 @app.route("/gallery")
 def gallery():
@@ -248,7 +225,7 @@ def gallery():
 
     return render_template("gallery.html", images=images)
 
-# ================= CONTACT (EMAIL SAFE) =================
+# ================= CONTACT =================
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     if request.method == "POST":
@@ -270,7 +247,7 @@ def contact():
             msg["To"] = os.getenv("EMAIL_USER")
 
             server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-            server.login(os.getenv("gaurav202pawar@gmail.com"), os.getenv("tiwltvxcjmdhtpwp"))
+            server.login(os.getenv("EMAIL_USER"), os.getenv("EMAIL_PASS"))
             server.send_message(msg)
             server.quit()
 
@@ -282,21 +259,23 @@ def contact():
 
     return render_template("contact.html")
 
-# ================= AI POSES =================
+# ================= AI POSES (FIXED) =================
 @app.route("/poses/<category>")
 def poses(category):
+
     keywords = {
-        "wedding": ["wedding", "bride", "groom"],
-        "birthday": ["birthday", "cake"],
-        "cinematic": ["cinematic", "photoshoot"]
+        "wedding": "wedding couple photoshoot",
+        "birthday": "birthday party celebration",
+        "cinematic": "cinematic photoshoot"
     }
 
     images = []
 
     if category in keywords:
+        query = keywords[category]
+
         for i in range(8):
-            keyword = random.choice(keywords[category])
-            url = f"https://picsum.photos/seed/{keyword}{random.randint(1,1000)}/600/400"
+            url = f"https://source.unsplash.com/600x400/?{query}&sig={random.randint(1,1000)}"
             images.append(url)
 
     return render_template("poses.html", images=images, category=category)
@@ -305,4 +284,3 @@ def poses(category):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-    
